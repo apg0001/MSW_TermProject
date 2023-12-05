@@ -17,7 +17,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:gravity="center"
-        android:text="monthly meal"
+        android:text="월간 식사"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="#9E28B3"
         android:textSize="20sp"
@@ -119,17 +119,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewDinner"
         tools:ignore="MissingConstraints" />
-
-    <Button
-        android:id="@+id/cha_Btn"
-        android:layout_width="395dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="수정"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/textViewBreakfastContent"

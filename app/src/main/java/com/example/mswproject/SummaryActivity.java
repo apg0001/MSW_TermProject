@@ -1,12 +1,15 @@
 package com.example.mswproject;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,6 +19,8 @@ public class SummaryActivity extends AppCompatActivity {
     TextView textViewTitle, textViewOption, textViewCategory, textViewDish, textViewPlace, textViewDate, textViewCost, textViewCal, textViewReview;
     ImageView imageViewPhoto;
 
+    String itemID;
+
     private DBHelper dbHelper;
     private SQLiteDatabase sqliteDB;
 
@@ -24,7 +29,7 @@ public class SummaryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_summary);
 
-        String itemID = Integer.toString(getIntent().getIntExtra("ITEM_ID", -1));
+        itemID = Integer.toString(getIntent().getIntExtra("ITEM_ID", -1));
 
         textViewTitle = findViewById(R.id.textViewTitle3);
         textViewOption = findViewById(R.id.textViewOption);
@@ -78,4 +83,25 @@ public class SummaryActivity extends AppCompatActivity {
             }
         }
     }
+
+    public void delItem(View view){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("삭제")
+                .setMessage("식사 데이터를 삭제할까요?")
+                .setPositiveButton("예", (dialog, which) -> {
+                    // User clicked Yes, delete the data
+                    SQLiteDatabase db = dbHelper.getWritableDatabase();
+                    db.delete("meallist", "id = ?", new String[]{itemID});
+
+                    Intent intent = new Intent(getApplicationContext(), MealList.class);
+                    startActivity((intent));
+                    finish();
+                })
+                .setNegativeButton("아니오", (dialog, which) -> {
+                    // User clicked No, do nothing
+                    dialog.dismiss();
+                })
+                .show();
+    }
 }
+

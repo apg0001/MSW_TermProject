@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
+
 import java.util.Random;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +28,7 @@ import java.util.Calendar;
 public class MealInputActivity extends AppCompatActivity {
 
     private EditText editTextDish, editTextCost, editTextReview;
+    private EditText editTextSide1, editTextSide2, editTextSide3;
     private DBHelper dbHelper;
 
     private static final int PICK_PHOTO_REQUEST = 1;
@@ -36,6 +38,8 @@ public class MealInputActivity extends AppCompatActivity {
     private Spinner spinnerOption, spinnerCategory, spinnerPlace;
     private EditText editTextStartTime, editTextEndTime;
     private String selectedStartTime, selectedEndTime, selectedStartDate, selectedEndDate;
+
+    private int sideCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +53,13 @@ public class MealInputActivity extends AppCompatActivity {
         editTextStartTime = findViewById(R.id.editTextStartTime);
         editTextEndTime = findViewById(R.id.editTextEndTime);
 
+        editTextSide1 = findViewById(R.id.editTextSide1);
+        editTextSide2 = findViewById(R.id.editTextSide2);
+        editTextSide3 = findViewById(R.id.editTextSide3);
+
         // Set up adapters for spinners
-        spinnerOption = findViewById(R.id.spinnerOption);
         spinnerCategory = findViewById(R.id.spinnerCategory);
         spinnerPlace = findViewById(R.id.spinnerPlace);
-        setupSpinnerAdapter(spinnerOption, R.array.options_array);
         setupSpinnerAdapter(spinnerCategory, R.array.categories_array);
         setupSpinnerAdapter(spinnerPlace, R.array.places_array);
 
@@ -179,10 +185,10 @@ public class MealInputActivity extends AppCompatActivity {
         }
     }
 
-    private static int calculateUnicodeSum(String input){
+    private static int calculateUnicodeSum(String input) {
         int sum = 0;
 
-        for(int i = 0; i < input.length(); i++){
+        for (int i = 0; i < input.length(); i++) {
             char character = input.charAt(i);
             int unicodeValue = character;
 
@@ -191,20 +197,47 @@ public class MealInputActivity extends AppCompatActivity {
         return sum;
     }
 
+    public void addSide(View view){
+        if(sideCount == 0){
+            editTextSide1.setEnabled(true);
+            sideCount++;
+        }
+        else if(sideCount ==1){
+            editTextSide2.setVisibility(View.VISIBLE);
+            editTextSide2.setEnabled(true);
+            sideCount++;
+        }
+        else{
+            editTextSide3.setVisibility(View.VISIBLE);
+            editTextSide3.setEnabled(true);
+            sideCount++;
+        }
+    }
+
     public void saveMeal(View view) {
         // Retrieve user input
         String dish = editTextDish.getText().toString();
-        String option = spinnerOption.getSelectedItem().toString();
         String category = spinnerCategory.getSelectedItem().toString();
         String place = spinnerPlace.getSelectedItem().toString();
         String cost = editTextCost.getText().toString();
         String review = editTextReview.getText().toString();
+        String side = "";
+
+        if(sideCount >= 1){
+            side += editTextSide1.getText().toString();
+        }
+        if(sideCount >= 2){
+            side += ", " + editTextSide2.getText().toString();
+        }
+        if(sideCount ==3){
+            side += ", " + editTextSide3.getText().toString();
+        }
 
         // Save input to the database
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("dish", dish);
-        values.put("option", option);
+        values.put("side", side);
         values.put("category", category);
         values.put("start_time", selectedStartTime);
         values.put("end_time", selectedEndTime);
@@ -213,15 +246,20 @@ public class MealInputActivity extends AppCompatActivity {
         values.put("review", review);
         values.put("photo_path", selectedPhotoPath);
 
+        int cal = 0;
         Random random = new Random(calculateUnicodeSum(dish));
-        values.put("calories", random.nextInt(500) + 500);
+        cal += random.nextInt(500) + 500;
+        random = new Random(calculateUnicodeSum(side));
+        cal += (random.nextInt(20) + 20) * sideCount;
+
+        values.put("calories", cal);
 
         long newRowId = db.insert("meallist", null, values);
 
         if (newRowId != -1) {
-            Toast.makeText(this, "Meal saved successfully", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "식사가 저장되었습니다.", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Error saving meal", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "식사 저장 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
         }
 
         // Close the database

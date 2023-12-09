@@ -1,6 +1,5 @@
 package com.example.mswproject;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.database.Cursor;
@@ -15,7 +14,7 @@ public class CustomCalendar extends AppCompatActivity {
 
     private CalendarView calendarView;
     private TextView diaryTextView, textViewTitle, textViewBeverage,
-            textViewBreakfast, textViewLunch, textViewDinner,
+            textViewBreakfast, textViewLunch, textViewDinner, textViewDayCal, textViewDayCalContent,
             textViewBreakfastContent, textViewLunchContent, textViewDinnerContent, textViewBeverageContent;
     private Button cha_Btn;
 
@@ -48,6 +47,8 @@ public class CustomCalendar extends AppCompatActivity {
         textViewLunchContent = findViewById(R.id.textViewLunchContent);
         textViewDinnerContent = findViewById(R.id.textViewDinnerContent);
         textViewBeverageContent = findViewById(R.id.textViewBeverageContent);
+        textViewDayCalContent = findViewById(R.id.textViewDayCalContent);
+        textViewDayCal = findViewById(R.id.textViewDayCal);
     }
 
     private void handleDateSelection(int year, int month, int dayOfMonth) {
@@ -59,6 +60,8 @@ public class CustomCalendar extends AppCompatActivity {
         textViewLunchContent.setVisibility(View.VISIBLE);
         textViewDinnerContent.setVisibility(View.VISIBLE);
         textViewBeverageContent.setVisibility(View.VISIBLE);
+        textViewDayCalContent.setVisibility(View.VISIBLE);
+        textViewDayCal.setVisibility(View.VISIBLE);
 
         diaryTextView.setText(String.format("%d / %d / %d", year, month + 1, dayOfMonth));
         diaryTextView.setTextSize(24);
@@ -76,6 +79,12 @@ public class CustomCalendar extends AppCompatActivity {
             populateMealContent(date, "점심", textViewLunchContent);
             populateMealContent(date, "저녁", textViewDinnerContent);
             populateMealContent(date, "음료", textViewBeverageContent);
+
+            try(Cursor cursor = sqliteDB.rawQuery("SELECT SUM(calories) FROM meallist WHERE start_time LIKE ?;", new String[]{date + "%"})){
+                if(cursor.moveToFirst()){
+                    textViewDayCalContent.setText(cursor.getString(0) + " kacl");
+                }
+            }
         } finally {
             if (sqliteDB != null) {
                 sqliteDB.close();

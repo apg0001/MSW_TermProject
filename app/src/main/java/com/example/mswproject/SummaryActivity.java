@@ -16,7 +16,7 @@ import android.widget.TextView;
 import java.io.File;
 
 public class SummaryActivity extends AppCompatActivity {
-    TextView textViewTitle, textViewOption, textViewCategory, textViewDish, textViewPlace, textViewDate, textViewCost, textViewCal, textViewReview;
+    TextView textViewTitle, textViewSide, textViewCategory, textViewDish, textViewPlace, textViewDate, textViewCost, textViewCal, textViewReview;
     ImageView imageViewPhoto;
 
     String itemID;
@@ -32,7 +32,6 @@ public class SummaryActivity extends AppCompatActivity {
         itemID = Integer.toString(getIntent().getIntExtra("ITEM_ID", -1));
 
         textViewTitle = findViewById(R.id.textViewTitle3);
-        textViewOption = findViewById(R.id.textViewOption);
         textViewCategory = findViewById(R.id.textViewCategory);
         textViewDish = findViewById(R.id.textViewDishName);
         textViewPlace = findViewById(R.id.textViewPlace);
@@ -40,6 +39,7 @@ public class SummaryActivity extends AppCompatActivity {
         textViewCost = findViewById(R.id.textViewCost);
         textViewCal = findViewById(R.id.textViewCal);
         textViewReview = findViewById(R.id.textViewReview);
+        textViewSide = findViewById(R.id.textViewSide);
 
         imageViewPhoto = findViewById(R.id.imageViewPhoto2);
 
@@ -50,12 +50,12 @@ public class SummaryActivity extends AppCompatActivity {
 
             try (Cursor cursor = sqliteDB.rawQuery("SELECT * FROM meallist WHERE id = " + itemID + ";", null)) {
                 if (cursor.moveToFirst()) {
-                    textViewOption.setText(cursor.getString(2));
+                    textViewSide.setText(cursor.getString(2));
                     textViewCategory.setText(cursor.getString(3));
                     textViewDish.setText(cursor.getString(1));
                     textViewPlace.setText(cursor.getString(7));
-                    textViewCost.setText(cursor.getString(6));
-                    textViewCal.setText(cursor.getString(8));
+                    textViewCost.setText(cursor.getString(6) + " 원");
+                    textViewCal.setText(cursor.getString(8) + " kcal");
                     textViewReview.setText(cursor.getString(9));
 
                     String startTemp = cursor.getString(4);

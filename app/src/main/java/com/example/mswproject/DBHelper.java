@@ -15,7 +15,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String sql = "CREATE TABLE meallist ( " +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "dish String, " +
-                "option String, " +
+                "side String, " +
                 "category String, " +
                 "start_time String," +
                 "end_time String, " +
